@@ -13,6 +13,7 @@ from marketplace.app.database import Base, async_session_maker, engine
 
 
 def scopefunc():
+    # Получение текущего теста
     return os.environ.get('PYTEST_CURRENT_TEST').rsplit(' ', 1)[0]
 
 
@@ -63,7 +64,7 @@ async def client(app) -> AsyncClient:
 @pytest.fixture()
 async def db() -> AsyncSession:
     async with engine.connect() as conn:
-        # TestDBSession.configure(bind=conn)
+        TestDBSession.configure(bind=conn)
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
         await conn.commit()

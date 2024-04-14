@@ -2,21 +2,18 @@ from datetime import UTC
 
 from async_factory_boy.factory.sqlalchemy import AsyncSQLAlchemyFactory
 from factory import Faker
-from models import Discount, DiscountStatus
+from models import Task, TaskStatus, TaskType
 
 from tests.conftest import TestDBSession
 
 
-class DiscountFactoryBase(AsyncSQLAlchemyFactory):
+class TaskFactoryBase(AsyncSQLAlchemyFactory):
     class Meta:
-        model = Discount
+        model = Task
         sqlalchemy_session = TestDBSession
         sqlalchemy_session_persistence = 'commit'
 
     id = Faker('uuid4')
-    status = Faker(
-        'random_element',
-        elements=list(DiscountStatus),
-    )
+    status = Faker('random_element', elements=list(TaskStatus))
     created_at = Faker('date_time', tzinfo=UTC)
-    percentage = Faker('pyint')
+    type = Faker('random_element', elements=list(TaskType))

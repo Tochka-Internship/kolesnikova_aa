@@ -31,6 +31,12 @@ db_to_api_stock_status_map: dict[StockStatus, StockStatusSchema] = {
 }
 
 api_to_db_stock_status_map: dict[StockStatusSchema, StockStatus] = revert_dict(db_to_api_stock_status_map)
+# TODO: В будущем убрать и изменить на отображение Модель API <- Модель сервиса <- Модель БД
+task_status_model_to_api_map = {
+    DBTaskStatus.COMPLETED: TaskStatus.COMPLETED,
+    DBTaskStatus.IN_WORK: TaskStatus.IN_WORK,
+    DBTaskStatus.CANCELED: TaskStatus.CANCELED,
+}
 
 
 @dataclass
@@ -76,12 +82,6 @@ class AcceptanceService:
             )
             for (sku_id, stock_status), items in accepted_items_by_sku_stock_status.items()
         ]
-        # TODO: В будущем убрать и изменить на отображение Модель API <- Модель сервиса <- Модель БД
-        task_status_model_to_api_map = {
-            DBTaskStatus.COMPLETED: TaskStatus.COMPLETED,
-            DBTaskStatus.IN_WORK: TaskStatus.IN_WORK,
-            DBTaskStatus.CANCELED: TaskStatus.CANCELED,
-        }
 
         return GetAcceptanceInfoResponse(
             id=acceptance.id,

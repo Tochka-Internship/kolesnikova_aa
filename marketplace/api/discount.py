@@ -1,7 +1,7 @@
 import uuid
 
-from api.dependencies import get_db
-from fastapi import APIRouter, Depends, Query
+from app.database import async_session_maker
+from fastapi import APIRouter, Query
 from providers.discount import DiscountProvider
 from schemas.discount import (
     CancelDiscountSchema,
@@ -11,7 +11,6 @@ from schemas.discount import (
 )
 from service_models import CreateDiscountDTO
 from services.discount import DiscountService
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 router = APIRouter(
@@ -22,11 +21,10 @@ router = APIRouter(
 @router.get("/getDiscount", response_model=DiscountSchema)
 async def get_discount(
     id: uuid.UUID = Query(),
-    db: AsyncSession = Depends(get_db),
 ) -> DiscountSchema:
     """Получение инфо об акции"""
     discount_dto = await DiscountService(
-        db_session_maker=lambda: db,
+        db_session_maker=async_session_maker,
         discount_provider=DiscountProvider,
     ).get_discount(discount_id=id)
     return DiscountSchema(
@@ -38,14 +36,13 @@ async def get_discount(
     )
 
 
-@router.post("/createDiscount", response_model=CreateDiscountResponseSchema)
+@router.post("/createDiscount", response_model=CreateDiscountResponseSchema, status_code=status.HTTP_201_CREATED)
 async def create_discount(
     request_data: CreateDiscountSchema,
-    db: AsyncSession = Depends(get_db),
 ) -> CreateDiscountResponseSchema:
     """Создание акции"""
     discount_id = await DiscountService(
-        db_session_maker=lambda: db,
+        db_session_maker=async_session_maker,
         discount_provider=DiscountProvider,
     ).create_discount(
         discount_data=CreateDiscountDTO(
@@ -59,11 +56,10 @@ async def create_discount(
 @router.post("/cancelDiscount", status_code=status.HTTP_200_OK)
 async def cancel_discount(
     request_data: CancelDiscountSchema,
-    db: AsyncSession = Depends(get_db),
 ):
     """Закончить акцию"""
     await DiscountService(
-        db_session_maker=lambda: db,
+        db_session_maker=async_session_maker,
         discount_provider=DiscountProvider,
     ).cancel_discount(discount_id=request_data.id)
     return status.HTTP_200_OK

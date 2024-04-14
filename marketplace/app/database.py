@@ -9,10 +9,11 @@ from app.config import config
 engine = create_async_engine(
     url=str(config.DATABASE_URI),
     echo=True,
-    connect_args={
-        # https://stackoverflow.com/a/59932909
-        "options": "-c timezone=utc",
-    }
+    # TODO: asyncpg не принимает "options" - уточнить замену
+    # connect_args={
+    #     # https://stackoverflow.com/a/59932909
+    #     "options": "-c timezone=utc",
+    # }
 )
 
 async_session_maker = async_sessionmaker(
