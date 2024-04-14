@@ -8,8 +8,7 @@ from models import Sku
 from tests.conftest import TestDBSession
 
 
-# class SkuFactory(SQLAlchemyModelFactory):
-class SkuFactory(AsyncSQLAlchemyFactory):
+class SkuFactoryBase(AsyncSQLAlchemyFactory):
     class Meta:
         model = Sku
         sqlalchemy_session = TestDBSession

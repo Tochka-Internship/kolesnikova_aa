@@ -107,7 +107,6 @@ class ItemDiscount(database.Base):
     __tablename__ = "item_discounts"
     # TODO: Добавить констрейнт: если ItemDiscountType.PROMOTION, то discount_id is not null
 
-
     id: Mapped[uuid_pk]
     type: Mapped[ItemDiscountType]
     # Зарезервированная скидка либо за дефект, либо за акцию на момент создания заказа
